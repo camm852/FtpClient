@@ -15,6 +15,7 @@ import java.nio.charset.StandardCharsets;
  *
  * @author camm0
  */
+
 public class FtpClient {
     public static void main(String[] args) {
         String host = "127.0.0.1"; // Cambia esto por la dirección IP o el nombre de host del servidor
