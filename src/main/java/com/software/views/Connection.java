@@ -4,18 +4,32 @@
  */
 package com.software.views;
 
+import com.software.controller.ClientController;
+import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author camm0
  */
 public class Connection extends javax.swing.JFrame {
 
+    private Socket socketConnection;
+    private ClientController clientController;
+    
     /**
      * Creates new form Connection
      */
     public Connection() {
+        socketConnection = new Socket();
+        clientController = new ClientController();
         initComponents();
     }
+    
+    
+    
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -77,6 +91,11 @@ public class Connection extends javax.swing.JFrame {
         );
 
         jButton2.setText("Conectar");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -126,6 +145,30 @@ public class Connection extends javax.swing.JFrame {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        String ipAddress = jTextField2.getText();
+        int port = Integer.parseInt(jTextField1.getText());
+        
+        Socket requestConnection = clientController.requestConnection(ipAddress, port);
+        
+        if(requestConnection == null){
+            
+            
+        }else{
+            
+            this.socketConnection = requestConnection;
+            
+            try {
+                Thread.sleep(1500);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            
+        }
+        
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
