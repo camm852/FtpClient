@@ -4,7 +4,6 @@
  */
 package com.software.views;
 
-import com.software.controller.ClientController;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,15 +14,11 @@ import java.util.logging.Logger;
  */
 public class Connection extends javax.swing.JFrame {
 
-    private Socket socketConnection;
-    private ClientController clientController;
     
     /**
      * Creates new form Connection
      */
     public Connection() {
-        socketConnection = new Socket();
-        clientController = new ClientController();
         initComponents();
     }
     
@@ -147,26 +142,7 @@ public class Connection extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        String ipAddress = jTextField2.getText();
-        int port = Integer.parseInt(jTextField1.getText());
         
-        Socket requestConnection = clientController.requestConnection(ipAddress, port);
-        
-        if(requestConnection == null){
-            
-            
-        }else{
-            
-            this.socketConnection = requestConnection;
-            
-            try {
-                Thread.sleep(1500);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            
-            
-        }
         
     }//GEN-LAST:event_jButton2ActionPerformed
 
