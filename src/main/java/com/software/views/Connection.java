@@ -151,7 +151,8 @@ public class Connection extends javax.swing.JFrame {
     private void ConectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ConectButtonActionPerformed
         String ipAddress = IpTextField.getText();
         String port = PortTextField.getText();
-
+        System.out.println(ipAddress);
+        System.out.println(port);
         // solicitar conexion
         Socket requestConnection = clientController.connectToServer(port, ipAddress);
         // verificar conexion

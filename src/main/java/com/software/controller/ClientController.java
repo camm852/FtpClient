@@ -24,13 +24,9 @@ public class ClientController {
         int serverPort = Integer.parseInt(port);
         Gson gson = new Gson();
 
-        int socketTimeOutDefault = 0;
-        int socketTimeOutReadDocument = 500;
-
         try {
             Socket socket = new Socket(ip, serverPort);
             InputStream inputStream = socket.getInputStream();
-            OutputStream outputStream = socket.getOutputStream();
 
             byte[] responseDataBytes = new byte[1024];
             int bytesRead;
@@ -50,7 +46,6 @@ public class ClientController {
                     break;
                 }
             }
-
             return socket;
         } catch (IOException e) {
             return null;
