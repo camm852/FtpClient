@@ -12,6 +12,7 @@ public class Request {
 
     private String type;
     private String service;
+    private String body;
 
     public String getType() {
         return type;
@@ -23,6 +24,14 @@ public class Request {
 
     public String getService() {
         return service;
+    }
+
+    public void setBody(String body) {
+        this.body = body;
+    }
+
+    public String getBody() {
+        return body;
     }
 
     public void setService(String service) {
