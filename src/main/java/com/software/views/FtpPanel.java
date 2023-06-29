@@ -9,20 +9,20 @@ import com.software.entities.Response;
 import java.awt.FileDialog;
 import java.net.Socket;
 
-import java.io.IOException;
 import java.io.OutputStream;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
+import com.software.controller.ClientController;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
-import java.net.SocketTimeoutException;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JList;
+import javax.swing.border.EmptyBorder;
 
 /**
  *
@@ -33,22 +33,49 @@ public class FtpPanel extends javax.swing.JFrame {
     Gson gson = new Gson();
     private Request request;
     private Response response;
-    /**
-     * Creates new form FtpPanel
-     */
-    private Socket socketConnection;//socket
-
+    private Socket socketConnection; 
+    private ClientController clientController;
+    private String pathDocuments;
+    private String localDocumentSelected;
+    private String serverDocumentSelected;
+    
     // Constructor que acepta un Socket
-    public FtpPanel(Socket socket) {
+    public FtpPanel(Socket socket, ClientController clientController) {
+        initComponents();
+
         socketConnection = socket;
+        pathDocuments = "./Documents/";
+        localDocumentSelected = "";
+        serverDocumentSelected = "";
+        this.clientController = clientController;
+        
+        clientController.setPathDocuments(pathDocuments);
+        clientController.documentsPrevLoad(ClientDocumentList);
+        
         request = new Request();
         response = new Response();
-        initComponents();
+        
+        
+        EmptyBorder emptyBorder = new EmptyBorder(0, 0, 0, 0);
+        this.ServerDocumentsList.setBorder(emptyBorder);
+        this.ClientDocumentList.setBorder(emptyBorder);
+        this.MessagesTexPane.setBorder(emptyBorder);
+        this.ScrollServerDocumentsList.setBorder(null);
+        this.ScrollClientDocumentsList.setBorder(null);
+        this.ScrollMessagesPane.setBorder(null);
+        
     }
 
     // Constructor sin parámetros
     public FtpPanel() {
         initComponents();
+        EmptyBorder emptyBorder = new EmptyBorder(0, 0, 0, 0);
+        this.ServerDocumentsList.setBorder(emptyBorder);
+        this.ClientDocumentList.setBorder(emptyBorder);
+        this.MessagesTexPane.setBorder(emptyBorder);
+        this.ScrollServerDocumentsList.setBorder(null);
+        this.ScrollClientDocumentsList.setBorder(null);
+        this.ScrollMessagesPane.setBorder(null);
     }
 
     /**
@@ -61,215 +88,343 @@ public class FtpPanel extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
-        listDocServer = new javax.swing.JButton();
-        jScrollPane4 = new javax.swing.JScrollPane();
-        ServerDoc = new javax.swing.JTextPane();
-        jPanel2 = new javax.swing.JPanel();
-        sendDocServer = new javax.swing.JButton();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        ClientDoc = new javax.swing.JTextPane();
-        downloadDocServer = new javax.swing.JButton();
+        SeverPanel = new javax.swing.JPanel();
+        ScrollServerDocumentsList = new javax.swing.JScrollPane();
+        ServerDocumentsList = new javax.swing.JList<>();
+        FtpTitle = new javax.swing.JLabel();
+        ButtonRefresh = new javax.swing.JLabel();
+        LabelServerDocumentList = new javax.swing.JLabel();
+        LabelDownloadDocument = new javax.swing.JLabel();
+        ClientPanel = new javax.swing.JPanel();
+        ServerTitle = new javax.swing.JLabel();
+        ScrollClientDocumentsList = new javax.swing.JScrollPane();
+        ClientDocumentList = new javax.swing.JList<>();
+        LabelServerDocumentList1 = new javax.swing.JLabel();
+        LabelLoadDocument = new javax.swing.JLabel();
+        LabelSendDocument1 = new javax.swing.JLabel();
+        MessagesPanel = new javax.swing.JPanel();
+        ScrollMessagesPane = new javax.swing.JScrollPane();
+        MessagesTexPane = new javax.swing.JTextPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Cliente");
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), "Documentos servidor", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.TOP));
+        SeverPanel.setBackground(new java.awt.Color(30, 174, 255));
+        SeverPanel.setPreferredSize(new java.awt.Dimension(372, 509));
 
-        listDocServer.setText("Listar");
-        listDocServer.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                listDocServerActionPerformed(evt);
+        ServerDocumentsList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                ServerDocumentsListValueChanged(evt);
+            }
+        });
+        ScrollServerDocumentsList.setViewportView(ServerDocumentsList);
+
+        FtpTitle.setFont(new java.awt.Font("Calisto MT", 1, 48)); // NOI18N
+        FtpTitle.setForeground(new java.awt.Color(255, 255, 255));
+        FtpTitle.setText("FTP");
+
+        ButtonRefresh.setIcon(new javax.swing.ImageIcon("C:\\Users\\camm0\\Documents\\NetBeansProjects\\FtpClient\\Icons\\refresh-button.png")); // NOI18N
+        ButtonRefresh.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        ButtonRefresh.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                ButtonRefreshMouseClicked(evt);
             }
         });
 
-        ServerDoc.setEditable(false);
-        jScrollPane4.setViewportView(ServerDoc);
+        LabelServerDocumentList.setFont(new java.awt.Font("Cambria", 3, 18)); // NOI18N
+        LabelServerDocumentList.setForeground(new java.awt.Color(255, 255, 255));
+        LabelServerDocumentList.setText("Documentos en el servidor");
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(69, 69, 69)
-                .addComponent(listDocServer, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(74, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel1Layout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(jScrollPane4)
-                    .addContainerGap()))
+        LabelDownloadDocument.setFont(new java.awt.Font("Cambria", 1, 16)); // NOI18N
+        LabelDownloadDocument.setForeground(new java.awt.Color(255, 255, 255));
+        LabelDownloadDocument.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        LabelDownloadDocument.setIcon(new javax.swing.ImageIcon("C:\\Users\\camm0\\Documents\\NetBeansProjects\\FtpClient\\Icons\\download.png")); // NOI18N
+        LabelDownloadDocument.setText("Descargar Documento");
+        LabelDownloadDocument.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+
+        javax.swing.GroupLayout SeverPanelLayout = new javax.swing.GroupLayout(SeverPanel);
+        SeverPanel.setLayout(SeverPanelLayout);
+        SeverPanelLayout.setHorizontalGroup(
+            SeverPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(SeverPanelLayout.createSequentialGroup()
+                .addContainerGap(19, Short.MAX_VALUE)
+                .addGroup(SeverPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, SeverPanelLayout.createSequentialGroup()
+                        .addGroup(SeverPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(ScrollServerDocumentsList, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(SeverPanelLayout.createSequentialGroup()
+                                .addComponent(LabelServerDocumentList)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(ButtonRefresh)))
+                        .addGap(26, 26, 26))
+                    .addComponent(FtpTitle, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)))
+            .addGroup(SeverPanelLayout.createSequentialGroup()
+                .addGap(90, 90, 90)
+                .addComponent(LabelDownloadDocument)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(listDocServer)
-                .addContainerGap())
-            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel1Layout.createSequentialGroup()
-                    .addGap(21, 21, 21)
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 313, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(45, Short.MAX_VALUE)))
-        );
-
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), "Recibir Documento", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.TOP));
-
-        sendDocServer.setText("Enviar");
-        sendDocServer.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                sendDocServerActionPerformed(evt);
-            }
-        });
-
-        ClientDoc.setEditable(false);
-        jScrollPane3.setViewportView(ClientDoc);
-
-        downloadDocServer.setText("Descargar");
-        downloadDocServer.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                downloadDocServerActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jScrollPane3)
-                        .addContainerGap())
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(0, 23, Short.MAX_VALUE)
-                        .addComponent(downloadDocServer, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(sendDocServer, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(31, 31, 31))))
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(21, 21, 21)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 313, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(sendDocServer)
-                    .addComponent(downloadDocServer))
-                .addContainerGap())
-        );
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        SeverPanelLayout.setVerticalGroup(
+            SeverPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, SeverPanelLayout.createSequentialGroup()
+                .addComponent(FtpTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(8, 8, 8)
+                .addGroup(SeverPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(LabelServerDocumentList)
+                    .addComponent(ButtonRefresh))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(ScrollServerDocumentsList, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(LabelDownloadDocument, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(237, 237, 237))
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+
+        getContentPane().add(SeverPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 390, 490));
+
+        ClientPanel.setBackground(new java.awt.Color(255, 255, 255));
+        ClientPanel.setPreferredSize(new java.awt.Dimension(372, 509));
+
+        ServerTitle.setFont(new java.awt.Font("Calisto MT", 1, 48)); // NOI18N
+        ServerTitle.setForeground(new java.awt.Color(30, 174, 255));
+        ServerTitle.setText("SERVER");
+
+        ClientDocumentList.setBackground(new java.awt.Color(250, 250, 250));
+        ClientDocumentList.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                ClientDocumentListPropertyChange(evt);
+            }
+        });
+        ClientDocumentList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                ClientDocumentListValueChanged(evt);
+            }
+        });
+        ScrollClientDocumentsList.setViewportView(ClientDocumentList);
+
+        LabelServerDocumentList1.setFont(new java.awt.Font("Cambria", 3, 18)); // NOI18N
+        LabelServerDocumentList1.setText("Documentos locales");
+
+        LabelLoadDocument.setFont(new java.awt.Font("Cambria", 1, 16)); // NOI18N
+        LabelLoadDocument.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        LabelLoadDocument.setIcon(new javax.swing.ImageIcon("C:\\Users\\camm0\\Documents\\NetBeansProjects\\FtpClient\\Icons\\subir.png")); // NOI18N
+        LabelLoadDocument.setText("Cargar Documento");
+        LabelLoadDocument.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        LabelLoadDocument.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                LabelLoadDocumentMouseClicked(evt);
+            }
+        });
+
+        LabelSendDocument1.setFont(new java.awt.Font("Cambria", 1, 16)); // NOI18N
+        LabelSendDocument1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        LabelSendDocument1.setIcon(new javax.swing.ImageIcon("C:\\Users\\camm0\\Documents\\NetBeansProjects\\FtpClient\\Icons\\send.png")); // NOI18N
+        LabelSendDocument1.setText("Enviar Documento");
+        LabelSendDocument1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        LabelSendDocument1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                LabelSendDocument1MouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout ClientPanelLayout = new javax.swing.GroupLayout(ClientPanel);
+        ClientPanel.setLayout(ClientPanelLayout);
+        ClientPanelLayout.setHorizontalGroup(
+            ClientPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ClientPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(ClientPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(ClientPanelLayout.createSequentialGroup()
+                        .addComponent(ServerTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(ClientPanelLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addGroup(ClientPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(ClientPanelLayout.createSequentialGroup()
+                                .addComponent(LabelLoadDocument)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
+                                .addComponent(LabelSendDocument1)
+                                .addGap(22, 22, 22))
+                            .addGroup(ClientPanelLayout.createSequentialGroup()
+                                .addGroup(ClientPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(ScrollClientDocumentsList, javax.swing.GroupLayout.PREFERRED_SIZE, 356, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(LabelServerDocumentList1))
+                                .addGap(0, 0, Short.MAX_VALUE))))))
+        );
+        ClientPanelLayout.setVerticalGroup(
+            ClientPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ClientPanelLayout.createSequentialGroup()
+                .addComponent(ServerTitle)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(LabelServerDocumentList1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(ScrollClientDocumentsList, javax.swing.GroupLayout.PREFERRED_SIZE, 342, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(ClientPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LabelSendDocument1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(LabelLoadDocument, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        getContentPane().add(ClientPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 0, 400, 490));
+
+        MessagesPanel.setBackground(new java.awt.Color(255, 255, 255));
+
+        MessagesTexPane.setEnabled(false);
+        ScrollMessagesPane.setViewportView(MessagesTexPane);
+
+        javax.swing.GroupLayout MessagesPanelLayout = new javax.swing.GroupLayout(MessagesPanel);
+        MessagesPanel.setLayout(MessagesPanelLayout);
+        MessagesPanelLayout.setHorizontalGroup(
+            MessagesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(ScrollMessagesPane, javax.swing.GroupLayout.DEFAULT_SIZE, 790, Short.MAX_VALUE)
+        );
+        MessagesPanelLayout.setVerticalGroup(
+            MessagesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(ScrollMessagesPane, javax.swing.GroupLayout.DEFAULT_SIZE, 60, Short.MAX_VALUE)
+        );
+
+        getContentPane().add(MessagesPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 490, 790, 60));
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void listDocServerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listDocServerActionPerformed
+    private void LabelLoadDocumentMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LabelLoadDocumentMouseClicked
+        FileDialog fileDialog = new FileDialog(this, "Seleccionar archivo", FileDialog.LOAD);
+        fileDialog.setVisible(true);
 
-    }//GEN-LAST:event_listDocServerActionPerformed
+        String selectedFile = fileDialog.getFile();
+        if (selectedFile != null) {
+            String filePath = fileDialog.getDirectory() + selectedFile;
 
-    private void sendDocServerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendDocServerActionPerformed
-        if (evt.getSource() == this.sendDocServer) {
-            FileDialog fileDialog = new FileDialog(this, "Seleccionar archivo", FileDialog.LOAD);
-            fileDialog.setVisible(true);
+            File file = new File(filePath);
+            clientController.loadDocument(file);
+        }
+    }//GEN-LAST:event_LabelLoadDocumentMouseClicked
 
-            String selectedFile = fileDialog.getFile();
-            if (selectedFile != null) {
-                String filePath = fileDialog.getDirectory() + selectedFile;
+    private void LabelSendDocument1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LabelSendDocument1MouseClicked
+        try {                    
+            
+            File file = clientController.getDocument(localDocumentSelected);
+            
+            if(file == null) return;
+            
+            InputStream fileInputStream = new FileInputStream(file);
+            request.setType("post");
+            request.setService("send-document");
+            request.setBody(localDocumentSelected);
 
-                // Establecer la ruta del archivo en el JTextPane
-                File file = new File(filePath);
-                
-                try {                    
-                    InputStream fileInputStream = new FileInputStream(file);
-                    request.setType("post");
-                    request.setService("send-document");
-                    request.setBody(file.getName());
+            String jsonString = gson.toJson(request);
 
-                    String jsonString = gson.toJson(request);
+            byte[] requestJson = jsonString.getBytes("UTF-8");
 
-                    byte[] requestJson = jsonString.getBytes("UTF-8");
+            OutputStream outputStream = this.socketConnection.getOutputStream();
+            InputStream inputStream = this.socketConnection.getInputStream();
 
-                    OutputStream outputStream = this.socketConnection.getOutputStream();
-                    InputStream inputStream = this.socketConnection.getInputStream();
+            outputStream.write(requestJson);
+            System.out.println("JSON enviado correctamente al servidor.");
 
-                    outputStream.write(requestJson);
-                    System.out.println("JSON enviado correctamente al servidor.");
 
-                    
-                    byte[] responseGetDocument = new byte[1024];
+            byte[] responseGetDocument = new byte[1024];
 
-                    int bytesRead = 0;
+            int bytesRead = 0;
 
-                    
-                    while ((bytesRead = inputStream.read(responseGetDocument)) != -1) {
-                        String responseJsonString = new String(responseGetDocument, 0, bytesRead, StandardCharsets.UTF_8);
-                        response = gson.fromJson(responseJsonString, Response.class);
-                        break;
-                    }
 
-                    if(!response.getStatus().equals("200")){
-                        System.out.println(response.getData());
-                        return;
-                    }
-                    
-                    byte[] buffer = new byte[1024];
-                    bytesRead = 0;
-                    while ((bytesRead = fileInputStream.read(buffer)) != -1) {
-                        System.out.println(bytesRead);
-                        outputStream.write(buffer, 0, bytesRead);
-                    }
-                    fileInputStream.close();
-                } catch (Exception e) {
-                    System.out.println("Fallo al abrir el archivo");
-                }
-                System.out.println("Archivo enviado correctamente");
+            while ((bytesRead = inputStream.read(responseGetDocument)) != -1) {
+                String responseJsonString = new String(responseGetDocument, 0, bytesRead, StandardCharsets.UTF_8);
+                response = gson.fromJson(responseJsonString, Response.class);
+                break;
             }
 
-        }
-    }//GEN-LAST:event_sendDocServerActionPerformed
+            if(!response.getStatus().equals("200")){
+                System.out.println(response.getData());
+                return;
+            }
 
-    private void downloadDocServerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downloadDocServerActionPerformed
-        if (evt.getSource() == this.downloadDocServer) {
-            
+            byte[] buffer = new byte[1024];
+            bytesRead = 0;
+            while ((bytesRead = fileInputStream.read(buffer)) != -1) {
+                System.out.println(bytesRead);
+                outputStream.write(buffer, 0, bytesRead);
+            }
+            fileInputStream.close();
+        } catch (Exception e) {
+            System.out.println("Fallo al abrir el archivo");
         }
-    }//GEN-LAST:event_downloadDocServerActionPerformed
+        System.out.println("Archivo enviado correctamente");
+    }//GEN-LAST:event_LabelSendDocument1MouseClicked
+
+    private void ClientDocumentListPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_ClientDocumentListPropertyChange
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ClientDocumentListPropertyChange
+
+    private void ClientDocumentListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_ClientDocumentListValueChanged
+        if (!evt.getValueIsAdjusting()) {
+           JList<String> localDocumentList = (JList<String>) evt.getSource();
+           String documentSelected = localDocumentList.getSelectedValue();
+           this.localDocumentSelected = documentSelected;
+           //TextPaneOutMessage.setText("Se ha seleccionado el plugin: "+selectedPlugin);
+           //jarSelected = selectedPlugin;
+        }
+    }//GEN-LAST:event_ClientDocumentListValueChanged
+
+    private void ButtonRefreshMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ButtonRefreshMouseClicked
+       
+        InputStream inputStream = null;
+        try {
+            OutputStream outputStream = this.socketConnection.getOutputStream();
+            inputStream = this.socketConnection.getInputStream();
+            request.setType("get");
+            request.setService("list-documents");
+            String jsonString = gson.toJson(request);
+            int bytesRead = 0;
+            byte[] dataBytes = new byte[1024];
+            try {
+                dataBytes = jsonString.getBytes("UTF-8");
+            } catch (UnsupportedEncodingException ex) {
+                System.out.println("Fallo al serializar");
+            }
+            try {
+                outputStream.write(dataBytes);
+            } catch (IOException ex) {
+                System.out.println("Fallo al enviar el archivo");
+            }
+            System.out.println("JSON enviado correctamente al servidor.");
+            byte[] responseDataBytes = new byte[1024];
+            try {
+                while ((bytesRead = inputStream.read(responseDataBytes)) != -1) {
+                    String responseJsonString = new String(responseDataBytes, 0, bytesRead, StandardCharsets.UTF_8);
+                    Response response = gson.fromJson(responseJsonString, Response.class);
+                    System.out.println("Respuesta recibida del servidor:");
+                    System.out.println("status: " + response.getStatus());
+                    System.out.println("data: " + response.getData());
+                    clientController.refreshServerDocuments(ServerDocumentsList, response.getData());
+                    break;
+                }
+            } catch (IOException ex) {
+                System.out.println("Fallo al recibir");
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(FtpPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
+    }//GEN-LAST:event_ButtonRefreshMouseClicked
+
+    private void ServerDocumentsListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_ServerDocumentsListValueChanged
+        if (!evt.getValueIsAdjusting()) {
+           JList<String> serverDocumentList = (JList<String>) evt.getSource();
+           String documentSelected = serverDocumentList.getSelectedValue();
+           this.serverDocumentSelected = documentSelected;
+           //TextPaneOutMessage.setText("Se ha seleccionado el plugin: "+selectedPlugin);
+           //jarSelected = selectedPlugin;
+        }
+    }//GEN-LAST:event_ServerDocumentsListValueChanged
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        // <editor-fold defaultstate="collapsed" desc=" Look and feel setting code
-        // (optional) ">
-        /*
-         * If Nimbus (introduced in Java SE 6) is not available, stay with the default
-         * look and feel.
-         * For details see
-         * http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
-         */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -286,25 +441,27 @@ public class FtpPanel extends javax.swing.JFrame {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(FtpPanel.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        // </editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new FtpPanel().setVisible(true);
-            }
-        });
+        // </editor-fold>   
     }
 
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextPane ClientDoc;
-    private javax.swing.JTextPane ServerDoc;
-    private javax.swing.JButton downloadDocServer;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JButton listDocServer;
-    private javax.swing.JButton sendDocServer;
+    private javax.swing.JLabel ButtonRefresh;
+    private javax.swing.JList<String> ClientDocumentList;
+    private javax.swing.JPanel ClientPanel;
+    private javax.swing.JLabel FtpTitle;
+    private javax.swing.JLabel LabelDownloadDocument;
+    private javax.swing.JLabel LabelLoadDocument;
+    private javax.swing.JLabel LabelSendDocument1;
+    private javax.swing.JLabel LabelServerDocumentList;
+    private javax.swing.JLabel LabelServerDocumentList1;
+    private javax.swing.JPanel MessagesPanel;
+    private javax.swing.JTextPane MessagesTexPane;
+    private javax.swing.JScrollPane ScrollClientDocumentsList;
+    private javax.swing.JScrollPane ScrollMessagesPane;
+    private javax.swing.JScrollPane ScrollServerDocumentsList;
+    private javax.swing.JList<String> ServerDocumentsList;
+    private javax.swing.JLabel ServerTitle;
+    private javax.swing.JPanel SeverPanel;
     // End of variables declaration//GEN-END:variables
 }

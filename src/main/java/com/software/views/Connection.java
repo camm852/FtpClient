@@ -176,7 +176,7 @@ public class Connection extends javax.swing.JFrame {
             // Ocultar la ventana padre del componente actual (ventana Connection)
             setVisible(false);
             // Crear el panel FTP y pasar el socket
-            FtpPanel ftpPanel = new FtpPanel(requestConnection);
+            FtpPanel ftpPanel = new FtpPanel(requestConnection, clientController);
             // Mostrar la ventana FtpPanel
             ftpPanel.setVisible(true);
             // Cerrar la ventana Connection
