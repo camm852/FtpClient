@@ -15,6 +15,7 @@ import javax.swing.DefaultListModel;
  * @author camm0
  */
 public class ClientFeatures {
+    
     public Socket connecToServer(String ip, int port){
         try {
             Socket socket = new Socket(ip, port);
@@ -29,18 +30,27 @@ public class ClientFeatures {
         return documents;
     }
     
-    
     public List<String> stringDocumentsToList(String documents) {
-        String[] lineas = documents.split("\n");
+        String[] lines = documents.split("\n");
 
         // Crear una nueva lista y agregar los elementos del arreglo
         List<String> lineList = new ArrayList<>();
-        lineList.addAll(Arrays.asList(lineas));
+        lineList.addAll(Arrays.asList(lines));
 
         return lineList;
     }
-
     
+    public File findDocument(String pathDocument){
+        File file = new File(pathDocument);
+        System.out.println("archivo encontrado");
+        System.out.println(file.getName());
+        return file;
+    }
+    
+    public String getNameItemListServer(String itemListName) {
+        String[] lines = itemListName.split(" ");
+        return lines[0];
+    }
     
     public DefaultListModel<String> loadDocumentsPrevLoaded(Map<String,File> documentList){
         DefaultListModel<String> model = new DefaultListModel<>();
@@ -51,7 +61,7 @@ public class ClientFeatures {
         return model; 
     }
     
-    public File finDocumentName(String document, Documents documents){
+    public File findDocumentName(String document, Documents documents){
         for (Map.Entry<String, File> entry : documents.getDocuments().entrySet()) {
             if(entry.getKey().equals(document)) return entry.getValue();
         }

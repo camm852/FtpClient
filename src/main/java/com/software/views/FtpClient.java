@@ -58,7 +58,7 @@ public class FtpClient {
     
     
     public static void main(String[] args) throws InterruptedException {
-        String host = "192.168.1.109"; // Cambia esto por la dirección IP o el nombre de host del servidor
+        String host = "192.168.137.223"; // Cambia esto por la dirección IP o el nombre de host del servidor
         //String host = "127.0.0.1";
         int port = 5000; // Cambia esto por el número de puerto del servidor
         

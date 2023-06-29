@@ -28,9 +28,6 @@ public class Connection extends javax.swing.JFrame {
         initComponents();
     }
     
-    
-    
-    
 
     /**
      * This method is called from within the constructor to initialize the form.
