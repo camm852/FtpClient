@@ -12,6 +12,7 @@ import java.net.Socket;
 import java.io.OutputStream;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.software.controller.ClientController;
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,6 +22,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.border.EmptyBorder;
 
@@ -38,6 +40,8 @@ public class FtpPanel extends javax.swing.JFrame {
     private String pathDocuments;
     private String localDocumentSelected;
     private String serverDocumentSelected;
+    private int xMouse, yMouse; // coords screen
+    private InputDialogUtils showInputDialog;
     
     // Constructor que acepta un Socket
     public FtpPanel(Socket socket, ClientController clientController) {
@@ -48,6 +52,8 @@ public class FtpPanel extends javax.swing.JFrame {
         localDocumentSelected = "";
         serverDocumentSelected = "";
         this.clientController = clientController;
+        
+        showInputDialog = new InputDialogUtils();
         
         clientController.setPathDocuments(pathDocuments);
         clientController.documentsPrevLoad(ClientDocumentList);
@@ -99,6 +105,7 @@ public class FtpPanel extends javax.swing.JFrame {
         ButtonRefresh = new javax.swing.JLabel();
         LabelServerDocumentList = new javax.swing.JLabel();
         LabelDownloadDocument = new javax.swing.JLabel();
+        LabelListUsers = new javax.swing.JLabel();
         ClientPanel = new javax.swing.JPanel();
         ServerTitle = new javax.swing.JLabel();
         ScrollClientDocumentsList = new javax.swing.JScrollPane();
@@ -107,9 +114,12 @@ public class FtpPanel extends javax.swing.JFrame {
         LabelLoadDocument = new javax.swing.JLabel();
         LabelSendDocument = new javax.swing.JLabel();
         MessagesPanel = new javax.swing.JPanel();
+        TopBarPanel = new javax.swing.JPanel();
+        CloseWindow = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Cliente");
+        setUndecorated(true);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         SeverPanel.setBackground(new java.awt.Color(30, 174, 255));
@@ -155,41 +165,57 @@ public class FtpPanel extends javax.swing.JFrame {
             }
         });
 
+        LabelListUsers.setFont(new java.awt.Font("Cambria", 1, 16)); // NOI18N
+        LabelListUsers.setForeground(new java.awt.Color(255, 255, 255));
+        LabelListUsers.setIcon(new javax.swing.ImageIcon("C:\\Users\\camm0\\Documents\\NetBeansProjects\\FtpClient\\Icons\\listar.png")); // NOI18N
+        LabelListUsers.setText("Listar Usuarios");
+        LabelListUsers.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        LabelListUsers.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                LabelListUsersMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout SeverPanelLayout = new javax.swing.GroupLayout(SeverPanel);
         SeverPanel.setLayout(SeverPanelLayout);
         SeverPanelLayout.setHorizontalGroup(
             SeverPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(SeverPanelLayout.createSequentialGroup()
-                .addContainerGap(19, Short.MAX_VALUE)
+                .addContainerGap(21, Short.MAX_VALUE)
                 .addGroup(SeverPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(FtpTitle, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, SeverPanelLayout.createSequentialGroup()
                         .addGroup(SeverPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(LabelDownloadDocument)
-                            .addGroup(SeverPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(ScrollServerDocumentsList, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(SeverPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addGroup(SeverPanelLayout.createSequentialGroup()
+                                    .addComponent(LabelDownloadDocument)
+                                    .addGap(12, 12, 12)
+                                    .addComponent(LabelListUsers))
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, SeverPanelLayout.createSequentialGroup()
                                     .addComponent(LabelServerDocumentList)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(ButtonRefresh))))
-                        .addGap(26, 26, 26))))
+                                    .addComponent(ButtonRefresh)))
+                            .addComponent(ScrollServerDocumentsList, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(24, 24, 24))))
         );
         SeverPanelLayout.setVerticalGroup(
             SeverPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, SeverPanelLayout.createSequentialGroup()
                 .addComponent(FtpTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(8, 8, 8)
-                .addGroup(SeverPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(LabelServerDocumentList)
-                    .addComponent(ButtonRefresh))
+                .addGap(7, 7, 7)
+                .addGroup(SeverPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(ButtonRefresh)
+                    .addComponent(LabelServerDocumentList))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ScrollServerDocumentsList, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(LabelDownloadDocument, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(SeverPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LabelDownloadDocument, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(LabelListUsers))
                 .addGap(237, 237, 237))
         );
 
-        getContentPane().add(SeverPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 390, 490));
+        getContentPane().add(SeverPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 20, 390, 490));
 
         ClientPanel.setBackground(new java.awt.Color(255, 255, 255));
         ClientPanel.setPreferredSize(new java.awt.Dimension(372, 509));
@@ -276,7 +302,7 @@ public class FtpPanel extends javax.swing.JFrame {
                 .addContainerGap(13, Short.MAX_VALUE))
         );
 
-        getContentPane().add(ClientPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 0, 400, 490));
+        getContentPane().add(ClientPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 20, 400, 490));
 
         MessagesPanel.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -292,6 +318,48 @@ public class FtpPanel extends javax.swing.JFrame {
         );
 
         getContentPane().add(MessagesPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 490, 790, 0));
+
+        TopBarPanel.setBackground(new java.awt.Color(255, 255, 255));
+        TopBarPanel.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseDragged(java.awt.event.MouseEvent evt) {
+                TopBarPanelMouseDragged(evt);
+            }
+        });
+        TopBarPanel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                TopBarPanelMousePressed(evt);
+            }
+        });
+
+        CloseWindow.setFont(new java.awt.Font("Cambria", 1, 18)); // NOI18N
+        CloseWindow.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        CloseWindow.setText("X");
+        CloseWindow.setToolTipText("");
+        CloseWindow.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        CloseWindow.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        CloseWindow.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                CloseWindowMouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout TopBarPanelLayout = new javax.swing.GroupLayout(TopBarPanel);
+        TopBarPanel.setLayout(TopBarPanelLayout);
+        TopBarPanelLayout.setHorizontalGroup(
+            TopBarPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, TopBarPanelLayout.createSequentialGroup()
+                .addContainerGap(757, Short.MAX_VALUE)
+                .addComponent(CloseWindow, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        TopBarPanelLayout.setVerticalGroup(
+            TopBarPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, TopBarPanelLayout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(CloseWindow))
+        );
+
+        getContentPane().add(TopBarPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 790, 20));
 
         pack();
         setLocationRelativeTo(null);
@@ -365,9 +433,11 @@ public class FtpPanel extends javax.swing.JFrame {
                 System.out.println("data: " + response.getData());
                 break;
             }
-            
-        } catch (Exception e) {
-            System.out.println("Fallo al abrir el archivo");
+        } catch (JsonSyntaxException | IOException e) {
+            showInputDialog.showCloseConnectionServer();
+            this.setVisible(false);
+            new Connection().setVisible(true);
+            return;
         }
         System.out.println("Archivo enviado correctamente");
     }//GEN-LAST:event_LabelSendDocumentMouseClicked
@@ -381,8 +451,6 @@ public class FtpPanel extends javax.swing.JFrame {
            JList<String> localDocumentList = (JList<String>) evt.getSource();
            String documentSelected = localDocumentList.getSelectedValue();
            this.localDocumentSelected = documentSelected;
-           //TextPaneOutMessage.setText("Se ha seleccionado el plugin: "+selectedPlugin);
-           //jarSelected = selectedPlugin;
         }
     }//GEN-LAST:event_ClientDocumentListValueChanged
 
@@ -405,7 +473,10 @@ public class FtpPanel extends javax.swing.JFrame {
             try {
                 outputStream.write(dataBytes);
             } catch (IOException ex) {
-                System.out.println("Fallo al enviar el archivo");
+                showInputDialog.showCloseConnectionServer();
+                this.setVisible(false);
+                new Connection().setVisible(true);
+                return;
             }
             System.out.println("JSON enviado correctamente al servidor.");
             byte[] responseDataBytes = new byte[1024];
@@ -420,10 +491,16 @@ public class FtpPanel extends javax.swing.JFrame {
                     break;
                 }
             } catch (IOException ex) {
-                System.out.println("Fallo al recibir");
+               showInputDialog.showCloseConnectionServer();
+                this.setVisible(false);
+                new Connection().setVisible(true);
+                return;
             }
         } catch (IOException ex) {
-            Logger.getLogger(FtpPanel.class.getName()).log(Level.SEVERE, null, ex);
+            showInputDialog.showCloseConnectionServer();
+            this.setVisible(false);
+            new Connection().setVisible(true);
+            return;
         }
         
         
@@ -434,8 +511,6 @@ public class FtpPanel extends javax.swing.JFrame {
            JList<String> serverDocumentList = (JList<String>) evt.getSource();
            String documentSelected = serverDocumentList.getSelectedValue();
            this.serverDocumentSelected = documentSelected;
-           //TextPaneOutMessage.setText("Se ha seleccionado el plugin: "+selectedPlugin);
-           //jarSelected = selectedPlugin;
         }
     }//GEN-LAST:event_ServerDocumentsListValueChanged
 
@@ -471,48 +546,111 @@ public class FtpPanel extends javax.swing.JFrame {
                 break;
             }
 
-            if(!response.getStatus().equals("200")) System.exit(1);
+            if(!response.getStatus().equals("200")) {
+                System.out.println("No se puede descargar el arhivo");
+                return;
+            }
                 clientController.SaveDocument(socketConnection, nameDocument);
-            } catch (UnsupportedEncodingException ex) {
-                Logger.getLogger(FtpPanel.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
+        } catch (UnsupportedEncodingException ex) {
             Logger.getLogger(FtpPanel.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            showInputDialog.showCloseConnectionServer();
+            this.setVisible(false);
+            new Connection().setVisible(true);
+            return;
         }
             
                 
     }//GEN-LAST:event_LabelDownloadDocumentMouseClicked
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(FtpPanel.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(FtpPanel.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(FtpPanel.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(FtpPanel.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        // </editor-fold>   
-    }
-    
+    private void TopBarPanelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TopBarPanelMousePressed
+        xMouse = evt.getX();
+        yMouse = evt.getY();
+    }//GEN-LAST:event_TopBarPanelMousePressed
 
+    private void TopBarPanelMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TopBarPanelMouseDragged
+        int xScreen = evt.getXOnScreen();
+        int yScreen = evt.getYOnScreen();
+
+        this.setLocation(xScreen - xMouse, yScreen - yMouse);
+    }//GEN-LAST:event_TopBarPanelMouseDragged
+
+    private void CloseWindowMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CloseWindowMouseClicked
+        try {
+            this.socketConnection.close();
+            this.setVisible(false);
+            Connection connection = new Connection();
+            connection.setVisible(true);
+        } catch (IOException ex) {
+            System.exit(0);
+            Logger.getLogger(FtpPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_CloseWindowMouseClicked
+
+    private void LabelListUsersMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LabelListUsersMouseClicked
+        
+        String data = "";
+        
+        try {                                            
+            request.setType("get");
+            request.setService("list-users");
+            String jsonString = gson.toJson(request);
+            
+            OutputStream outputStream;
+            InputStream inputStream;
+            try {
+                outputStream = socketConnection.getOutputStream();
+                inputStream = socketConnection.getInputStream();
+            } catch (Exception e) {
+                showInputDialog.showCloseConnectionServer();
+                this.setVisible(false);
+                new Connection().setVisible(true);
+                return;
+            }
+            
+            byte[] dataBytes = new byte[1024];
+            try {
+                dataBytes = jsonString.getBytes("UTF-8");
+                outputStream.write(dataBytes);
+            } catch (UnsupportedEncodingException ex) {
+                System.out.println("Fallo al obtener los bytes del mensaje");
+            } catch (IOException ex) {
+                showInputDialog.showCloseConnectionServer();
+                this.setVisible(false);
+                new Connection().setVisible(true);
+                return;
+            }
+            int bytesRead = 0;
+            byte[] responseDataBytes = new byte[1024];
+            System.out.println("JSON enviado correctamente al servidor.");
+            while ((bytesRead = inputStream.read(responseDataBytes)) != -1) {
+                String responseJsonString = new String(responseDataBytes, 0, bytesRead, StandardCharsets.UTF_8);
+                Response response = gson.fromJson(responseJsonString, Response.class);
+                System.out.println("Respuesta recibida del servidor:");
+                System.out.println("status: " + response.getStatus());
+                System.out.println("data: " + response.getData());
+                data = response.getData();
+                break;
+            }
+        } catch (IOException ex) {
+            showInputDialog.showCloseConnectionServer();
+            this.setVisible(false);
+            new Connection().setVisible(true);
+            return;
+        }
+        UsersConnected usersFrame = new UsersConnected(clientController.getListUsers(data));
+        usersFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        usersFrame.setVisible(true);
+    }//GEN-LAST:event_LabelListUsersMouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel ButtonRefresh;
     private javax.swing.JList<String> ClientDocumentList;
     private javax.swing.JPanel ClientPanel;
+    private javax.swing.JLabel CloseWindow;
     private javax.swing.JLabel FtpTitle;
     private javax.swing.JLabel LabelDownloadDocument;
+    private javax.swing.JLabel LabelListUsers;
     private javax.swing.JLabel LabelLoadDocument;
     private javax.swing.JLabel LabelSendDocument;
     private javax.swing.JLabel LabelServerDocumentList;
@@ -523,5 +661,6 @@ public class FtpPanel extends javax.swing.JFrame {
     private javax.swing.JList<String> ServerDocumentsList;
     private javax.swing.JLabel ServerTitle;
     private javax.swing.JPanel SeverPanel;
+    private javax.swing.JPanel TopBarPanel;
     // End of variables declaration//GEN-END:variables
 }

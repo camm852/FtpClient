@@ -1,6 +1,7 @@
 package com.software.features;
 
 import com.software.entities.Documents;
+import com.software.entities.User;
 import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
@@ -50,6 +51,17 @@ public class ClientFeatures {
     public String getNameItemListServer(String itemListName) {
         String[] lines = itemListName.split(" ");
         return lines[0];
+    }
+    
+    public List<User> listUsers(String data){
+        List<User> users = new ArrayList<>();
+        String[] lines = data.split("\n");
+        
+        for(String line : lines){
+            String[] info = line.split("-");
+            users.add(new User(info[0], info[1], info[2]));
+        }
+        return users;
     }
     
     public DefaultListModel<String> loadDocumentsPrevLoaded(Map<String,File> documentList){

@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.software.entities.Documents;
 import com.software.entities.Response;
 import com.software.entities.Request;
+import com.software.entities.User;
 import com.software.features.ClientFeatures;
 import com.software.persistence.GetDocuments;
 import java.io.File;
@@ -21,8 +22,6 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 
@@ -114,7 +113,6 @@ public class ClientController {
     
     public boolean loadDocument(File document){
         setLocalDocuments(clientFeatures.loadDocument(localDocuments, document));
-        
         Path sourcePath = document.toPath();
         Path destinationPath = Paths.get(pathDocuments, document.getName());
         try {
@@ -155,6 +153,9 @@ public class ClientController {
         }
     }
     
+    public List<User> getListUsers(String data){
+        return clientFeatures.listUsers(data);
+    }
     
     public String getNameServerDocument(String itemListName){
         return clientFeatures.getNameItemListServer(itemListName);

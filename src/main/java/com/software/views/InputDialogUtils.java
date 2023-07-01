@@ -25,4 +25,11 @@ public class InputDialogUtils {
 
         JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
     }
+    
+    public void showCloseConnectionServer(){
+        String message = "Error de conexión. Se ha perdido al conexion con el servidor";
+        String title = "Error de conexión";
+        JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
+    }
+    
 }
