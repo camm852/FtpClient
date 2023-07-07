@@ -433,13 +433,14 @@ public class FtpPanel extends javax.swing.JFrame {
                 System.out.println("data: " + response.getData());
                 break;
             }
+            System.out.println("Archivo enviado correctamente");
+           
         } catch (JsonSyntaxException | IOException e) {
             showInputDialog.showCloseConnectionServer();
             this.setVisible(false);
             new Connection().setVisible(true);
             return;
         }
-        System.out.println("Archivo enviado correctamente");
     }//GEN-LAST:event_LabelSendDocumentMouseClicked
 
     private void ClientDocumentListPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_ClientDocumentListPropertyChange
@@ -550,7 +551,16 @@ public class FtpPanel extends javax.swing.JFrame {
                 System.out.println("No se puede descargar el arhivo");
                 return;
             }
-                clientController.SaveDocument(socketConnection, nameDocument);
+            clientController.SaveDocument(socketConnection, nameDocument);
+            byte buffer[] = new byte[1024];
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                String responseJsonString = new String(buffer, 0, bytesRead, StandardCharsets.UTF_8);
+                response = gson.fromJson(responseJsonString, Response.class);
+                System.out.println("Respuesta recibida del servidor:");
+                System.out.println("status: " + response.getStatus());
+                System.out.println("data: " + response.getData());
+                break;
+            }
         } catch (UnsupportedEncodingException ex) {
             Logger.getLogger(FtpPanel.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
@@ -590,7 +600,7 @@ public class FtpPanel extends javax.swing.JFrame {
     private void LabelListUsersMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LabelListUsersMouseClicked
         
         String data = "";
-        
+        Response response = new Response();
         try {                                            
             request.setType("get");
             request.setService("list-users");
@@ -602,6 +612,7 @@ public class FtpPanel extends javax.swing.JFrame {
                 outputStream = socketConnection.getOutputStream();
                 inputStream = socketConnection.getInputStream();
             } catch (Exception e) {
+                System.out.println("catch 1");
                 showInputDialog.showCloseConnectionServer();
                 this.setVisible(false);
                 new Connection().setVisible(true);
@@ -615,6 +626,7 @@ public class FtpPanel extends javax.swing.JFrame {
             } catch (UnsupportedEncodingException ex) {
                 System.out.println("Fallo al obtener los bytes del mensaje");
             } catch (IOException ex) {
+                System.out.println("catch 2");
                 showInputDialog.showCloseConnectionServer();
                 this.setVisible(false);
                 new Connection().setVisible(true);
@@ -625,7 +637,7 @@ public class FtpPanel extends javax.swing.JFrame {
             System.out.println("JSON enviado correctamente al servidor.");
             while ((bytesRead = inputStream.read(responseDataBytes)) != -1) {
                 String responseJsonString = new String(responseDataBytes, 0, bytesRead, StandardCharsets.UTF_8);
-                Response response = gson.fromJson(responseJsonString, Response.class);
+                response = gson.fromJson(responseJsonString, Response.class);
                 System.out.println("Respuesta recibida del servidor:");
                 System.out.println("status: " + response.getStatus());
                 System.out.println("data: " + response.getData());
@@ -633,12 +645,18 @@ public class FtpPanel extends javax.swing.JFrame {
                 break;
             }
         } catch (IOException ex) {
+            System.out.println("catch 3");
             showInputDialog.showCloseConnectionServer();
             this.setVisible(false);
             new Connection().setVisible(true);
             return;
         }
-        UsersConnected usersFrame = new UsersConnected(clientController.getListUsers(data));
+        UsersConnected usersFrame;
+        if(response.getStatus().equals("503")) {
+            usersFrame = new UsersConnected();
+        }else{
+            usersFrame = new UsersConnected(clientController.getListUsers(data));
+        }
         usersFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         usersFrame.setVisible(true);
     }//GEN-LAST:event_LabelListUsersMouseClicked

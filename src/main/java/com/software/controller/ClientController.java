@@ -136,7 +136,6 @@ public class ClientController {
             int bytesRead = 0;
             byte[] buffer = new byte[1024];
             while ((bytesRead = inputStream.read(buffer)) != -1) {
-                System.out.println(bytesRead);
                 fileOutputStream.write(buffer, 0, bytesRead);
             }
         } catch (SocketTimeoutException e) {

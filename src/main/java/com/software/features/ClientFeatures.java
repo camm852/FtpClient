@@ -43,7 +43,6 @@ public class ClientFeatures {
     
     public File findDocument(String pathDocument){
         File file = new File(pathDocument);
-        System.out.println("archivo encontrado");
         System.out.println(file.getName());
         return file;
     }
