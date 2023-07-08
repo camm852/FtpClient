@@ -420,7 +420,6 @@ public class FtpPanel extends javax.swing.JFrame {
             byte[] buffer = new byte[1024];
             bytesRead = 0;
             while ((bytesRead = fileInputStream.read(buffer)) != -1) {
-                System.out.println(bytesRead);
                 outputStream.write(buffer, 0, bytesRead);
             }
             fileInputStream.close();

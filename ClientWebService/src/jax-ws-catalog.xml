@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
+    <system systemId="http://localhost:53535/WebServices/DocumentService.asmx?wsdl" uri="wsdl/localhost_53535/WebServices/DocumentService.asmx.wsdl"/>
+    <system systemId="http://localhost:53535/WebServices/DocumentService.asmx?WSDL" uri="wsdl/localhost_53535/WebServices/DocumentService.asmx.wsdl"/>
+    <system systemId="http://192.168.20.78:53535/WebServices/DocumentService.asmx?WSDL" uri="wsdl/192.168.20.78_53535/WebServices/DocumentService.asmx.wsdl"/>
+</catalog>
